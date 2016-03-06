@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+
+    <property name="LOG_HOME" value="/opt/inmobi/logs/bob/server" />
+
+    <appender name="FILE-THREAD" class="ch.qos.logback.classic.sift.SiftingAppender">
+        <!-- This is MDC value -->
+        <!-- We will assign a value to 'logFileName' via Java code -->
+        <discriminator>
+            <key>logFileName</key>
+            <!--<defaultValue>head0</defaultValue>-->
+        </discriminator>
+
+        <sift>
+            <!-- A standard RollingFileAppender, the log file is based on 'logFileName' at runtime  -->
+            <appender name="FILE-${logFileName}"
+                      class="ch.qos.logback.core.rolling.RollingFileAppender">
+
+                <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+                    <!-- daily rollover -->
+                    <fileNamePattern>${LOG_HOME}/ads/${logFileName}_%d{yyyy_MM_dd_HH}.log
+                    </fileNamePattern>
+                </rollingPolicy>
+                <append>true</append>
+                <encoder>
+                    <Pattern>[%d{HH:mm:ss} %logger{0}::%class{0}:%line] [%-5level] - %msg%n
+                    </Pattern>
+                </encoder>
+            </appender>
+        </sift>
+    </appender>
+    <logger name="com.inmobi.pso.bobserver.services.v1.BobAssetsAdService" level="debug"
+            additivity="false">
+        <appender-ref ref="FILE-THREAD" />
+    </logger>
+
+
+    <!--Security service logger-->
+    <appender name="AdsByCreative" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <!-- daily rollover -->
+            <fileNamePattern>${LOG_HOME}/ads/ads_by_creative_guid_%d{yyyy_MM_dd_HH}.log
+            </fileNamePattern>
+        </rollingPolicy>
+        <append>true</append>
+        <encoder>
+            <Pattern>[%d{HH:mm:ss} %logger{0}::%class{0}:%line] [%-5level] - %msg%n
+            </Pattern>
+        </encoder>
+    </appender>
+    <logger name="com.inmobi.pso.bobserver.services.v1.BobProdAdService" additivity="false">
+        <appender-ref ref="AdsByCreative" />
+    </logger>
+
+
+    <!-- Bob prod Ads logger-->
+    <appender name="Decrypt" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <!-- daily rollover -->
+            <fileNamePattern>${LOG_HOME}/security/decrypt_%d{yyyy_MM_dd_HH}.log
+            </fileNamePattern>
+        </rollingPolicy>
+        <append>true</append>
+        <encoder>
+            <Pattern>[%d{HH:mm:ss} %logger{0}::%class{0}:%line] [%-5level] - %msg%n
+            </Pattern>
+        </encoder>
+    </appender>
+    <logger name="com.inmobi.pso.bobserver.services.v1.SecurityService" additivity="false">
+        <appender-ref ref="Decrypt" />
+    </logger>
+
+
+    <root level="debug">
+        <appender-ref ref="FILE-THREAD" />
+        <appender-ref ref="Decrypt" />
+        <appender-ref ref="AdsByCreative" />
+    </root>
+
+</configuration>

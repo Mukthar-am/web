@@ -1,0 +1,12 @@
+SMAP
+common_002drepo_002dstats_jsp.java
+JSP
+*S JSP
+*F
++ 0 common-repo-stats.jsp
+common-repo-stats.jsp
+*L
+3,2:56
+8,16:59
+23,2:75
+*E
